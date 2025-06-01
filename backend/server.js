@@ -14,7 +14,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// Root route to fix "Cannot GET /" error
+// Root route to handle GET /
 app.get("/", (req, res) => {
   res.send("Server is running! 🚀");
 });
@@ -24,9 +24,7 @@ app.use("/api/users", userRoutes);
 app.use("/api", apiRoutes);
 app.use("/api/written-tests", writtenTestRoutes);
 
-const PORT = process.env.PORT || 4000;
-
-// Database Connection
+// Database connection
 mongoose
   .connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
@@ -34,6 +32,12 @@ mongoose
   })
   .then(() => {
     console.log("✅ Connected to MongoDB");
+    const PORT = process.env.PORT || 4000;
     app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
   })
   .catch((err) => console.error("❌ MongoDB Connection Error:", err));
+
+// Optional: catch-all 404 handler (at the very bottom!)
+app.use((req, res) => {
+  res.status(404).send("Not Found");
+});
