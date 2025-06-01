@@ -14,7 +14,12 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// Routes
+// Root route to fix "Cannot GET /" error
+app.get("/", (req, res) => {
+  res.send("Server is running! 🚀");
+});
+
+// API routes
 app.use("/api/users", userRoutes);
 app.use("/api", apiRoutes);
 app.use("/api/written-tests", writtenTestRoutes);
@@ -22,12 +27,13 @@ app.use("/api/written-tests", writtenTestRoutes);
 const PORT = process.env.PORT || 4000;
 
 // Database Connection
-mongoose.connect(process.env.MONGO_URI, {
+mongoose
+  .connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-})
-.then(() => {
+  })
+  .then(() => {
     console.log("✅ Connected to MongoDB");
     app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-})
-.catch((err) => console.error("❌ MongoDB Connection Error:", err));
+  })
+  .catch((err) => console.error("❌ MongoDB Connection Error:", err));
